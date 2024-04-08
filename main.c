@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <omp.h> //OpenMP
 #include "esteira1.h"
 #include "esteira2.h"
 #include "esteira3.h"
@@ -71,8 +72,6 @@ int main() {
     initEsteira2(&esteira2_data);
     initEsteira3(&esteira3_data);
 
-   
-
     // Criação das threads para cada esteira
     pthread_create(&threads[0], NULL, esteira1, (void *)&esteira1_data);
     pthread_create(&threads[1], NULL, esteira2, (void *)&esteira2_data);
@@ -92,6 +91,20 @@ int main() {
     for (i = 0; i < NUM_THREADS; i++) {
         pthread_join(threads[i], NULL);
     }
+
+    // Soma o peso total das esteiras usando OpenMP
+    float total_weight = 0.0;
+    #pragma omp parallel for reduction(+:total_weight)
+    for (i = 0; i < NUM_THREADS; i++) {
+        if (i == 0)
+            total_weight += getEsteira1Weight(&esteira1_data);
+        else if (i == 1)
+            total_weight += getEsteira2Weight(&esteira2_data);
+        else if (i == 2)
+            total_weight += getEsteira3Weight(&esteira3_data);
+    }
+
+    printf("Peso total de todas as esteiras: %.2f Kg\n", total_weight);
 
     // Fecha o pipe
     close(pipe_fd[0]);
