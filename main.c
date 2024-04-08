@@ -40,7 +40,7 @@ void pausa(Esteira1Data *esteira1_data, Esteira2Data *esteira2_data, Esteira3Dat
                 printf("\nAperte S para pausar e/ou T para realizar o total das esteiras\n");
                 do {
                     key = getchar(); // Aguarda a próxima tecla pressionada
-                } while (key != '\n'); // Continua aguardando até que Enter seja pressionado
+                } while (key != '\n'); // Espera o Enter
                 
                 *pause_flag = 1; // Define a sinalização de pausa
                 write(*pipe_fd, "pausa", sizeof("pausa")); // Escreve no pipe para notificar a função principal sobre a pausa
@@ -83,11 +83,11 @@ int main() {
     // Parar as threads
     if (pause_flag) {
         printf("Parando as esteiras...\n");
-        // Realiza alguma ação para parar as esteiras, se necessário
-        // Aqui você pode enviar algum sinal para as threads para que elas saiam de seus loops
+       
+        
     }
 
-    // Aguarda a finalização das threads (não será alcançado neste exemplo)
+    // Aguarda a finalização das threads 
     for (i = 0; i < NUM_THREADS; i++) {
         pthread_join(threads[i], NULL);
     }
